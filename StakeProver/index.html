@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Stake Prover</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+
+    <div class="container">
+      <textarea class="form-control" rows="3" id="inp_text"></textarea>
+      <input type="text" class="form-control" id="inp_burn_amount" placeholder="Amount of Ether to burn">
+      <button type="button" id="btn_publish" class="btn btn-success btn-block btn-lg">Publish</button>
+      <button type="button" id="btn_extract" class="btn btn-success btn-block btn-lg">Extract</button>
+      <h2 id="result_publisher">hi</h2>
+      <h2 id="result_stake"></h2>
+      <h2 id="result_timestamp"></h2>
+      <h2 id="result_burned"></h2>
+    </div><!-- /.container -->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="wgo/wgo.min.js"></script> <!-- linking WGo javascript -->
+    <script type="text/javascript" src="script.js"></script> <!-- linking WGo javascript -->
+  </body>
+</html>

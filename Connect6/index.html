@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Connect6 ETH</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+    <!-- New Game Modal -->
+    <div class="modal fade" id="newGameModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-        hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">New Game</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="time_init">Seconds per move</label>
+                <input type="text" class="form-control" id="time_init" value="900">
+            </div>
+            <div class="form-group">
+                <label for="p1_stake">p1 wager (ETH)</label>
+                <input type="text" class="form-control" id="p1_stake" value="0">
+            </div>
+            <div class="form-group">
+                <label for="p2_stake">p2 wager (ETH)</label>
+                <input type="text" class="form-control" id="p2_stake" value="0">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="btn_start" class="btn btn-primary">Create</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Username Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-        hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Register</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="username_inp">Username</label>
+                <input type="text" class="form-control" id="username_inp" value="">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="btn_register" class="btn btn-primary">Register</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <div class="container">
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Lobby</a></li>
+        <li role="presentation"><a href="#profile" aria-controls="profile" id="game_tab" role="tab" data-toggle="tab">Game</a></li>
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">
+          <div class="row">
+            <div class="col-md-9">
+              <table class="table table-striped" id="games_table">
+                <tbody>
+                  <tr>
+                    <th>Game</th>
+                    <th>Time Per Move</th>
+                    <th>p1</th>
+                    <th>p1 stake(ETH)</th>
+                    <th>p2</th>
+                    <th>p2 stake(ETH)</th>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-3">
+              <hr>
+              <button type="button" id="btn_host_game" class="btn btn-success btn-block btn-lg">Host Game</button>
+              <hr>
+              <button type="button" id="btn_open_register" class="btn btn-primary btn-block btn-lg">Select Username</button>
+              <hr>
+              <button type="button" id="btn_refresh" class="btn btn-primary btn-block btn-lg">Refresh</button>
+              <hr>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="only_my_games" value="">
+                  Show Only My Active Games
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="profile">
+          <div class="row">
+            <div class="col-md-2">
+              <h4>Player 1 (black)</h4>
+              <h2 id="p1_name">p1</h2>
+              <h3 id="p1_time">10</h3>
+              <hr>
+              <h5 id="status"></h5>
+              <hr>
+              <h4>Browse moves:</h4>
+              <button type="button" id="btn_history_start" class="btn btn-info btn-block">Rewind</button>
+              <button type="button" id="btn_history_back" class="btn btn-info btn-block">Prev</button>
+              <button type="button" id="btn_history_next" class="btn btn-info btn-block">Next</button>
+              <button type="button" id="btn_history_end" class="btn btn-info btn-block">FF</button>
+            </div>
+            <div class="col-md-7" id="board"></div>
+            <div class="col-md-3">
+              <h4>Player 2 (white)</h4>
+              <h2 id="p2_name">p2</h2>
+              <h3 id="p2_time">20</h3>
+              <button type="button" id="btn_make_move" class="btn btn-success btn-block btn-lg">Make Move</button>
+              <hr>
+              <button type="button" id="btn_join" class="btn btn-primary btn-block">Join This Game</button>
+              <hr>
+              <button type="button" id="btn_time_victory" class="btn btn-primary btn-block">Claim Time Victory</button>
+            </div>
+          </div><!-- /row -->
+        </div>
+      </div>
+
+    </div><!-- /.container -->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="wgo/wgo.min.js"></script> <!-- linking WGo javascript -->
+    <script type="text/javascript" src="script.js"></script> <!-- linking WGo javascript -->
+  </body>
+</html>
