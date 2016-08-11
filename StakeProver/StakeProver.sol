@@ -20,10 +20,6 @@ contract StakeProver {
         hash_db[hashed_val].timestamp = now;
     }
     
-    function publish_str(string s) {
-        publish(sha3(s));
-    }
-
    function get_publisher(bytes32 hashed_val) constant returns (address) {
         return hash_db[hashed_val].publisher;
     }

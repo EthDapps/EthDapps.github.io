@@ -14,13 +14,29 @@
   </head>
   <body>
 
-
     <div class="container">
-      <textarea class="form-control" rows="3" id="inp_text"></textarea>
-      <input type="text" class="form-control" id="inp_burn_amount" placeholder="Amount of Ether to burn">
-      <button type="button" id="btn_publish" class="btn btn-success btn-block btn-lg">Publish</button>
-      <button type="button" id="btn_extract" class="btn btn-success btn-block btn-lg">Extract</button>
-      <h2 id="result_publisher">hi</h2>
+      <h3>Stake Prover</h3>
+      <p>This Dapp allows you to submit a hash of a text to the blockchain. The amount Ether you had in you account will be recorded. You can also optionally burn Ether when making a submission (this will be recorded). This could be used on forums to link all of your submissions to your Ethereum account.</p>
+      <p>Another potential use of this Dapp is to prove that you came up with some idea at a certain point in time. Just submit the hash of the description and it will be timestamped.</p>
+      <p>To verify a piece of text, enter into a box below and click "Get Info". (You are not sending a transaction in this case.)</p>
+      <textarea class="form-control" rows="3" id="inp_text" placeholder="Enter Text Here"></textarea>
+      <hr>
+      <input type="text" class="form-control" id="inp_burn_amount" placeholder="Amount of Ether to burn (optional)">
+      <hr>
+      <div class="panel panel-default" id="result_panel">
+        <div class="panel-heading">Results</div>
+        <div class="panel-body" id="result_panel_body">
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-md-8">
+          <button type="button" id="btn_get_info" class="btn btn-success btn-block btn-lg">Get Info</button>
+        </div>
+        <div class="col-md-4">
+          <button type="button" id="btn_publish" class="btn btn-danger btn-block btn-lg">Publish</button>
+        </div>
+      </div>
       <h2 id="result_stake"></h2>
       <h2 id="result_timestamp"></h2>
       <h2 id="result_burned"></h2>
