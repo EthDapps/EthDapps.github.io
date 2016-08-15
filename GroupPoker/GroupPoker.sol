@@ -72,12 +72,15 @@ contract GroupPoker {
         bytes32 hand_shift;
         address bettor;
         uint bet_size;
+        // add min players and max players (game will not unitl min players and will definitely start when max players is reached.
         uint pot_size;
         uint best_hand;
         address winner;
         uint time_of_last_stage_change;
         uint time_per_stage;
     }
+
+    //TODO: implement all constant hashing functions (so I can try things manually).
 
     function next_stage(Game g) internal {
         if (now > g.time_of_last_stage_change + g.time_per_stage) {
@@ -86,10 +89,13 @@ contract GroupPoker {
         }
     }
 
-    function manually_next_stage(uint game_num) {
+    function manual_next_stage(uint game_num) {
+        Game g = games[game_num];
         g.stage = Stages(uint(g.stage) + 1);
         g.time_of_last_stage_change = now;
     }
+
+    // TODO: what is there was no bid? or bid was 0
 
     function get_hand_shift(uint game_num) constant returns(bytes32) {
         return games[game_num].hand_shift;
@@ -104,7 +110,7 @@ contract GroupPoker {
     }
 
     function get_stage(uint game_num) constant returns(uint) {
-        return uint(g.stage);
+        return uint(games[game_num].stage);
     }
     
     function calculate_hand(uint hand, bytes32 hand_shift) constant returns (uint) {
@@ -178,6 +184,7 @@ contract GroupPoker {
         if (g.stage != Stages.reveal_bid) {
             throw;
         }
+        //TODO: fix the second part of or, if it's larger, then just use the max
         if (sha3(bid_amount, nonce) != g.hidden_bids[msg.sender] || bid_amount > g.max_bid_amounts[msg.sender]) {
             throw;
         }
@@ -282,4 +289,4 @@ contract GroupPoker {
         LogWinningsCollected(game_num, msg.sender, g.pot_size);
         token_interface.transfer(msg.sender, g.pot_size);
     }
-}
+

@@ -14,6 +14,7 @@
     </head>
     <body>
         <div class="container">
+            <button type="button" id="btn_refresh_table" class="btn btn-success btn-block btn-lg">Refresh Table</button>
             <h3>Submit Hidden Hand</h3>
             <p>hand</p>
             <input type="text" class="form-control" id="inp_hand" placeholder="hand">
@@ -52,9 +53,30 @@
                     <th>max_bid</th>
                 </tr>
             </table>
-            <p>bidding</p>
             
             <h3>Submit Hidden Bid</h3>
+            <p>max bid amount</p>
+            <input type="text" class="form-control" id="inp_max_bid_amount" placeholder="hand">
+            <p>bid amount</p>
+            <input type="text" class="form-control" id="inp_bid_amount" placeholder="hand">
+            <p>bid nonce</p>
+            <input type="text" class="form-control" id="inp_bid_nonce" placeholder="hand">
+            <p>bid secret</p>
+            <input type="text" class="form-control" id="inp_bid_secret" placeholder="hand">
+            <div class="row">
+                <div class="col-md-3">
+                    <button type="button" id="btn_bid_nonce" class="btn btn-success btn-block btn-lg">Bid Nonce</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" id="btn_bid_secret" class="btn btn-success btn-block btn-lg">Bid Secret</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" id="btn_submit_hidden_bid" class="btn btn-success btn-block btn-lg">Submit bid</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" id="btn_reveal_bid" class="btn btn-success btn-block btn-lg">Reveal Bid</button>
+                </div>
+            </div>
         </div><!-- /.container -->
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
