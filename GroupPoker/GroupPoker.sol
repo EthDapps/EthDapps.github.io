@@ -53,6 +53,13 @@ contract GroupPoker {
 
     Game[] public games;
 
+    event LogPlayerJoined(uint indexed game_num, address indexed player, bytes32 hidden_hand);
+
+    struct PlayerStatus {
+        bool joined;
+        bool eligible_to_win;
+    }
+
     struct Game {
         Stages stage;
         uint ante_size;
@@ -60,7 +67,8 @@ contract GroupPoker {
         mapping(address => bytes32) hidden_bids;
         mapping(address => bytes32) hidden_calls;
         mapping(address => uint) max_bid_amounts;
-        mapping(address => bool) eligible_to_win;
+        mapping(address => PlayerStatus) player_statuses;
+        uint num_players;
         bytes32 hand_shift;
         address bettor;
         uint bet_size;
@@ -78,9 +86,34 @@ contract GroupPoker {
         }
     }
 
+    function manually_next_stage(uint game_num) {
+        g.stage = Stages(uint(g.stage) + 1);
+        g.time_of_last_stage_change = now;
+    }
+
+    function get_hand_shift(uint game_num) constant returns(bytes32) {
+        return games[game_num].hand_shift;
+    }
+
+    function get_time_per_stage(uint game_num) constant returns(uint) {
+        return games[game_num].time_per_stage;
+    }
+
+    function get_time_of_last_stage_change(uint game_num) constant returns(uint) {
+        return games[game_num].time_of_last_stage_change;
+    }
+
+    function get_stage(uint game_num) constant returns(uint) {
+        return uint(g.stage);
+    }
     
     function calculate_hand(uint hand, bytes32 hand_shift) constant returns (uint) {
         return uint(sha3(hand, hand_shift));
+    }
+
+    // delete these?
+    function comb_sha3_uint_bytes32(uint hand, bytes32 nonce) constant returns (bytes32) {
+        return sha3(hand, nonce);
     }
 
     function get_current_hand_value(uint game_num, uint hand) constant returns(uint) {
@@ -103,21 +136,27 @@ contract GroupPoker {
     function submit_hidden_hand(uint game_num, bytes32 hidden_hand) {
         Game g = games[game_num];
         next_stage(g);
-        if (g.stage != Stages.submit_hidden_hand) {
+        if (g.stage != Stages.submit_hidden_hand || g.player_statuses[msg.sender].joined) {
             throw;
         }
+        g.num_players += 1;
         g.hidden_hands[msg.sender] = hidden_hand;
         g.hand_shift = sha3(g.hand_shift, block.blockhash(block.number));
         g.pot_size += g.ante_size;
+        g.player_statuses[msg.sender].joined = true;
+        LogPlayerJoined(game_num, msg.sender, hidden_hand);
         bool result = token_interface.transferFrom(msg.sender, address(this), g.ante_size);
         if (!result) {
             throw;
         }
     }
 
+    event LogHiddenBid(uint indexed game_num, address indexed player, uint max_bid_amount, bytes32 hidden_bid);
+
     function submit_hidden_bid(uint game_num, uint max_bid_amount, bytes32 hidden_bid) {
         Game g = games[game_num];
         next_stage(g);
+        // TODO: make sure player can't bid twice, and make sure max_bid_amount > , and make sure max_bid_amount > 0
         if (g.stage != Stages.submit_hidden_bid) {
             throw;
         }
@@ -125,10 +164,13 @@ contract GroupPoker {
         g.max_bid_amounts[msg.sender] = max_bid_amount;
         g.pot_size += max_bid_amount;
         bool result = token_interface.transferFrom(msg.sender, address(this), max_bid_amount);
+        LogHiddenBid(game_num, msg.sender, max_bid_amount, hidden_bid);
         if (!result) {
             throw;
         }
     }
+
+    event LogBidRevealed(uint indexed game_num, address indexed player, uint bid_amount, bytes32 nonce);
 
     function reveal_bid(uint game_num, uint bid_amount, bytes32 nonce) {
         Game g = games[game_num];
@@ -142,10 +184,11 @@ contract GroupPoker {
         uint refund_amount = g.max_bid_amounts[msg.sender] - bid_amount;
         if (bid_amount > g.bet_size) {
             g.bet_size = bid_amount;
-            g.eligible_to_win[g.bettor] = false;
+            g.player_statuses[g.bettor].eligible_to_win = false;
             g.bettor = msg.sender;
-            g.eligible_to_win[msg.sender] = true;
+            g.player_statuses[msg.sender].eligible_to_win = true;
         }
+        LogBidRevealed(game_num, msg.sender, bid_amount, nonce);
         if (refund_amount > 0) {
             g.pot_size -= refund_amount;
             bool result = token_interface.transfer(msg.sender, refund_amount);
@@ -155,22 +198,27 @@ contract GroupPoker {
         }
     }
 
+    event LogHiddenCall(uint indexed game_num, address indexed player, bytes32 hidden_call);
+
     function submit_hidden_call(uint game_num, bytes32 hidden_call) {
         Game g = games[game_num];
         next_stage(g);
         if (g.stage != Stages.submit_hidden_call) {
             throw;
         }
-        if (g.eligible_to_win[msg.sender]) {
+        if (g.player_statuses[msg.sender].eligible_to_win) {
             throw;
         }
         g.hidden_calls[msg.sender] = hidden_call;
         g.pot_size += g.bet_size;
+        LogHiddenCall(game_num, msg.sender, hidden_call);
         bool result = token_interface.transferFrom(msg.sender, address(this), g.bet_size);
         if (!result) {
             throw;
         }
     }
+
+    event LogCallRevealed(uint indexed game_num, address indexed player, bool call, bytes32 nonce);
 
     function reveal_call(uint game_num, bool call, bytes32 nonce) {
         Game g = games[game_num];
@@ -181,8 +229,9 @@ contract GroupPoker {
         if (sha3(call, nonce) != g.hidden_calls[msg.sender]) {
             throw;
         }
+        LogCallRevealed(game_num, msg.sender, call, nonce);
         if (call) {
-            g.eligible_to_win[msg.sender] = true;
+            g.player_statuses[msg.sender].eligible_to_win = true;
         } else {
             g.pot_size -= g.bet_size;
             bool result = token_interface.transfer(msg.sender, g.bet_size);
@@ -192,6 +241,8 @@ contract GroupPoker {
         }
     }
     
+    event LogHandRevealed(uint indexed game_num, address indexed player, uint hand, bytes32 nonce);
+
     function reveal_hand(uint game_num, uint hand, bytes32 nonce) returns (bool success)  {
         Game g = games[game_num];
         next_stage(g);
@@ -201,7 +252,7 @@ contract GroupPoker {
         if (sha3(hand, nonce) != g.hidden_hands[msg.sender]) {
             throw;
         }
-        if (!g.eligible_to_win[msg.sender]) {
+        if (!g.player_statuses[msg.sender].eligible_to_win) {
             throw;
         }
         uint hand_value = calculate_hand(hand, g.hand_shift);
@@ -210,8 +261,11 @@ contract GroupPoker {
         }
         g.best_hand = hand_value;
         g.winner = msg.sender;
+        LogHandRevealed(game_num, msg.sender, hand, nonce);
         return true;
     }
+
+    event LogWinningsCollected(uint indexed game_num, address indexed player, uint amount);
 
     function collect_winnings(uint game_num) {
         Game g = games[game_num];
@@ -225,6 +279,7 @@ contract GroupPoker {
             throw;
         }
         g.stage = Stages.finished;
+        LogWinningsCollected(game_num, msg.sender, g.pot_size);
         token_interface.transfer(msg.sender, g.pot_size);
     }
 }

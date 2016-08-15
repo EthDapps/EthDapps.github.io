@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <title>Kedalia Poker</title>
+
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="main.css" rel="stylesheet">
+
+    </head>
+    <body>
+        <div class="container">
+            <h3>Submit Hidden Hand</h3>
+            <p>hand</p>
+            <input type="text" class="form-control" id="inp_hand" placeholder="hand">
+            <p>hand nonce</p>
+            <input type="text" class="form-control" id="inp_hand_nonce" placeholder="hand">
+            <p>hand hidden</p>
+            <input type="text" class="form-control" id="inp_hand_secret" placeholder="hand">
+            <div class="row">
+                <div class="col-md-3">
+                    <button type="button" id="btn_get_hand" class="btn btn-success btn-block btn-lg">Hand</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" id="btn_get_hand_nonce" class="btn btn-success btn-block btn-lg">Nonce</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" id="btn_get_hand_secret" class="btn btn-success btn-block btn-lg">Secret</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" id="btn_submit_hidden_hand" class="btn btn-success btn-block btn-lg">Submit</button>
+                </div>
+            </div>
+            <p>Hand Value</p>
+            <input type="text" class="form-control" id="inp_hand_value" placeholder="hand">
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" id="btn_calculate_hand_value" class="btn btn-success btn-block btn-lg">Hand Value</button>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" id="btn_calculate_hand_value_perc" class="btn btn-success btn-block btn-lg">Hand Value %</button>
+                </div>
+            </div>
+            <h2>Players</h2>
+            <table class="table table-striped" id="player_table">
+                <tr>
+                    <th>Player</th>
+                    <th>max_bid</th>
+                </tr>
+            </table>
+            <p>bidding</p>
+            
+            <h3>Submit Hidden Bid</h3>
+        </div><!-- /.container -->
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="wgo/wgo.min.js"></script> <!-- linking WGo javascript -->
+        <script type="text/javascript" src="script.js"></script> <!-- linking WGo javascript -->
+    </body>
+</html>
