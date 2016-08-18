@@ -48,6 +48,10 @@ contract GroupPoker {
         finished
     }
 
+    // TODO: add current stage to UI + timer
+
+    // TODO: add ability to advance multiple stages at once (recursively?)
+
     // Account that holds chips.
     TokenInterface token_interface;
 
@@ -205,6 +209,23 @@ contract GroupPoker {
         }
     }
 
+    function reveal_bid_test(uint game_num, uint bid_amount, bytes32 nonce) {
+        Game g = games[game_num];
+        if (sha3(bid_amount, nonce) != g.hidden_bids[msg.sender]){
+            throw;
+        }
+        uint refund_amount = g.max_bid_amounts[msg.sender] - bid_amount;
+        LogBidRevealed(game_num, msg.sender, bid_amount, nonce);
+    }
+
+    function constant_sha3_uint_bytes32(uint a, bytes32 b) constant returns (bytes32) {
+        return sha3(a, b);
+    }
+
+    function constant_sha3_bool_bytes32(bool a, bytes32 b) constant returns (bytes32) {
+        return sha3(a, b);
+    }
+
     event LogHiddenCall(uint indexed game_num, address indexed player, bytes32 hidden_call);
 
     function submit_hidden_call(uint game_num, bytes32 hidden_call) {
@@ -248,6 +269,8 @@ contract GroupPoker {
         }
     }
     
+    // Do we are if someone reveals the hand twice?
+    
     event LogHandRevealed(uint indexed game_num, address indexed player, uint hand, bytes32 nonce);
 
     function reveal_hand(uint game_num, uint hand, bytes32 nonce) returns (bool success)  {
@@ -289,4 +312,4 @@ contract GroupPoker {
         LogWinningsCollected(game_num, msg.sender, g.pot_size);
         token_interface.transfer(msg.sender, g.pot_size);
     }
-
+}

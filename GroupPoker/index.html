@@ -50,7 +50,12 @@
             <table class="table table-striped" id="player_table">
                 <tr>
                     <th>Player</th>
-                    <th>max_bid</th>
+                    <th>max bid</th>
+                    <th>actual bid</th>
+                    <th>hidden call</th>
+                    <th>call</th>
+                    <th>hand</th>
+                    <th>collected</th>
                 </tr>
             </table>
             
@@ -75,6 +80,27 @@
                 </div>
                 <div class="col-md-3">
                     <button type="button" id="btn_reveal_bid" class="btn btn-success btn-block btn-lg">Reveal Bid</button>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-2">
+                    <button type="button" id="btn_call" class="btn btn-success btn-block btn-lg">Call</button>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="btn_fold" class="btn btn-success btn-block btn-lg">Fold</button>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="btn_reveal_call" class="btn btn-success btn-block btn-lg">Reveal Call</button>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="btn_reveal_fold" class="btn btn-success btn-block btn-lg">Reveal Fold</button>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="btn_reveal_hand" class="btn btn-success btn-block btn-lg">Reveal Hand</button>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="btn_collect" class="btn btn-success btn-block btn-lg">Collect</button>
                 </div>
             </div>
         </div><!-- /.container -->
