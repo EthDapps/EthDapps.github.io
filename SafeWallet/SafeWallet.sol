@@ -1,7 +1,9 @@
+pragma solidity ^0.4.11;
+
 contract SafeWallet {
 
   struct KeyHolder {
-    // How long this account 
+    // How long this keyholder has to wait before his release can be finalized.
     uint delay;
     bool active;
   }
@@ -9,7 +11,7 @@ contract SafeWallet {
   mapping(address => KeyHolder) public key_holders;
   address public admin;
 
-  uint public release_initiator;
+  address public release_initiator;
   uint public release_amount;
   uint public release_date;
   bool public release_pending;
@@ -52,7 +54,7 @@ contract SafeWallet {
     require(now > release_date);
 
     release_pending = false;
-    release_destination.transfer(release_amount);
+    release_initiator.transfer(release_amount);
   }
 
   function cancel_release () onlyKeyholder {
@@ -85,13 +87,13 @@ contract SafeWalletFactory {
 
   function SafeWalletFactory () {}
 
-  function createSafeWallet (address admin) {
+  function createSafeWallet (address admin) returns (address) {
     address newSafeWallet = new SafeWallet(admin);
-    safeWallets.push(newContract);
+    safeWallets.push(newSafeWallet);
     return newSafeWallet;
   }
 
-  function createSafeWallet () {
+  function createSafeWallet () returns (address) {
     return createSafeWallet(msg.sender);
   }
 }
