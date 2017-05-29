@@ -87,13 +87,13 @@ contract SafeWalletFactory {
 
   function SafeWalletFactory () {}
 
-  function createSafeWallet (address admin) returns (address) {
+  function create_safe_wallet (address admin) returns (address) {
     address newSafeWallet = new SafeWallet(admin);
     safeWallets.push(newSafeWallet);
     return newSafeWallet;
   }
 
-  function createSafeWallet () returns (address) {
+  function create_safe_wallet () returns (address) {
     return createSafeWallet(msg.sender);
   }
 }
