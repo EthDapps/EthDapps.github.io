@@ -91,6 +91,21 @@ contract LayeredWallet {
         }
     }
 
+    // A transaction can be accelerated by reducing its delay. For example,
+    // a key with with a delay of one week can reduce the amount of time that
+    // that a transaction with a 1 year delay has to wait to 1 month.
+    function accelerateTransaction(uint transactionId)
+        public
+        onlyKeyholder
+    {
+        Transaction tx = transactions[transactionId];
+        require(!tx.executed);
+        require(!tx.canceled);
+        uint targetReleaseDate = now + keyHolders[msg.sender].delay;
+        require(targetReleaseDate < tx.releaseDate);
+        tx.releaseDate = targetReleaseDate;
+    }
+
     function cancelTransaction(uint transactionId)
         public
         onlyKeyholder
